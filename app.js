@@ -468,7 +468,10 @@
   }
 
   function githubIssueUrl(change) {
-    var body = "<!-- AIPM_SOURCE\n" + JSON.stringify(change) + "\nAIPM_SOURCE -->";
+    var summary = change.action === "delete"
+      ? "删除公开资料：" + (change.title || change.id)
+      : "保存公开资料：" + change.item.title + "\n" + change.item.url + "\n标签：" + change.item.tags.join("、");
+    var body = summary + "\n\n<!-- AIPM_SOURCE\n" + JSON.stringify(change) + "\nAIPM_SOURCE -->";
     return "https://github.com/" + PUBLIC_REPO + "/issues/new?title=" +
       encodeURIComponent("更新公开书架") + "&body=" + encodeURIComponent(body);
   }
@@ -1062,6 +1065,13 @@
     var body = document.getElementById("lib-body");
     var summary = document.getElementById("lib-summary");
     if (!body) return;
+    var sync = document.getElementById("source-sync-status");
+    if (sync) {
+      sync.innerHTML = pendingDeletes().map(function (id) {
+        var source = publicSources.filter(function (item) { return item.id === id; })[0];
+        return ' 删除待确认：<a href="' + esc(githubIssueUrl({ action: "delete", id: id, title: source ? source.title : id })) + '">前往 GitHub 提交</a>';
+      }).join(" ");
+    }
     var all = getSources();
     var needle = libState.q.trim().toLowerCase();
     var searched = all.filter(function (s) { return matchesSource(s, needle); });
@@ -1597,7 +1607,7 @@
         undo.innerHTML = '已删除「' + esc(removed.title) + '」。<button type="button" data-undo-source>撤销删除</button>';
         renderLibrary();
         renderTagManager();
-        if (removed.kind === "link") window.location.assign(githubIssueUrl({ action: "delete", id: removed.id }));
+        if (removed.kind === "link") window.location.assign(githubIssueUrl({ action: "delete", id: removed.id, title: removed.title }));
         return;
       }
       if (e.target.closest("[data-reset-lib]")) {
