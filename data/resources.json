@@ -1,15 +1,1 @@
-[
-  {
-    "id": "sync-test-20261031",
-    "kind": "link",
-    "title": "同步测试（验收后删除）",
-    "url": "https://example.com/",
-    "typeKey": "article",
-    "moduleN": 0,
-    "tags": [
-      "同步测试"
-    ],
-    "addedAt": "2026-10-31T00:00:00.000Z",
-    "schemaVersion": 2
-  }
-]
+[]
