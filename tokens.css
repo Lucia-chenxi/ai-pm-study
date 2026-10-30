@@ -1,0 +1,60 @@
+:root {
+  --bg: oklch(98.6% 0.006 340);
+  --bg-soft: oklch(96.4% 0.014 345);
+  --board: oklch(93.4% 0.034 348);
+  --board-deep: oklch(88.2% 0.045 348);
+  --tile: oklch(97.2% 0.018 348);
+  --tile-top: oklch(99.2% 0.008 348);
+  --line: oklch(86% 0.035 348);
+  --line-strong: oklch(74% 0.06 350);
+  --ink: oklch(25% 0.028 340);
+  --ink-soft: oklch(40% 0.03 340);
+  --ink-mute: oklch(48% 0.028 340);
+  --rose: oklch(48% 0.145 353);
+  --rose-deep: oklch(40% 0.13 353);
+  --rose-soft: oklch(90% 0.06 350);
+  --lilac: oklch(82% 0.05 300);
+  --sage: oklch(55% 0.07 155);
+  --sage-deep: oklch(40% 0.06 155);
+  --sage-soft: oklch(91% 0.045 155);
+  --white: oklch(100% 0 0);
+  --danger: oklch(45% 0.16 25);
+
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Helvetica Neue", sans-serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: 3rem;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 14px;
+
+  --header-h: 56px;
+  --content-max: 1600px;
+  --reading-max: 880px;
+
+  --shadow-board: 0 24px 48px -36px oklch(40% 0.08 345 / 0.45);
+  --shadow-tile: 0 6px 0 var(--tile-edge), 0 14px 24px -18px oklch(40% 0.08 345 / 0.4);
+  --shadow-tile-raised: 0 9px 0 var(--tile-edge), 0 22px 30px -20px oklch(40% 0.08 345 / 0.5);
+  --shadow-stake: 0 1px 0 oklch(100% 0 0 / 0.8) inset;
+}

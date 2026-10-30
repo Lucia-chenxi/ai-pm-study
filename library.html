@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>资料书架 · AI 产品经理学习手册</title>
+<meta name="description" content="自己收藏 AI 产品经理学习资料，可添加、编辑、删除，并关联学习模块。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="library">
+<a class="skip-link" href="#lib-main">跳到资料书架</a>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <path d="M24 18c-1-6 1-10 5-13" fill="none" stroke="#5B1029" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M25 18c3-4 7-5 14-4" fill="none" stroke="#5B1029" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M30 9c3-3 7-4 11-2-1 4-5 7-9 7-1 0-2 0-2-5z" fill="#C94A6C" stroke="#5B1029" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="17" cy="30" r="9" fill="#E2758F" stroke="#5B1029" stroke-width="2"/>
+        <circle cx="33" cy="33" r="8" fill="#C94A6C" stroke="#5B1029" stroke-width="2"/>
+        <path d="M14 27c1-2 3-3 5-3" fill="none" stroke="#FBF2DE" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M30 30c1-1 2-2 3-2" fill="none" stroke="#FBF2DE" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-en">THE AI PM STUDY CLUB</span>
+        <span class="brand-cn">AI 产品经理学习手册</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a class="nav-link" href="index.html">学习地图</a>
+      <a class="nav-link" href="library.html" aria-current="page">资料书架</a>
+      <a class="nav-link" href="library.html#tag-manager">标签管理</a>
+      <a class="nav-link" href="growth.html">我的成长</a>
+    </nav>
+    <p class="issue-tag"><span>ISSUE</span><span>06</span></p>
+  </div>
+</header>
+
+<div class="checker" role="presentation"></div>
+
+<nav class="subnav" aria-label="资料书架分区">
+  <div class="wrap subnav-inner">
+    <p class="subnav-label">资料书架</p>
+    <div class="subnav-links">
+      <a class="subnav-link" href="#tag-manager" data-spy="tag-manager">标签管理</a>
+      <a class="subnav-link" href="#type-doc" data-spy="type-doc" data-jump-type="doc">当前文档<span class="subnav-count" data-count="doc">—</span></a>
+      <a class="subnav-link" href="#type-article" data-spy="type-article" data-jump-type="article">文章与视频<span class="subnav-count" data-count="article">—</span></a>
+      <a class="subnav-link" href="#type-method" data-spy="type-method" data-jump-type="method">基础方法<span class="subnav-count" data-count="method">—</span></a>
+    </div>
+    <a class="subnav-jump" href="#lib-controls">搜索 / 筛选</a>
+  </div>
+</nav>
+
+<div class="wrap shelf-head">
+  <div>
+    <p class="eyebrow">The shelf · collected by you</p>
+    <h1>
+      <span class="mast-en">THE <em>SHELF</em></span>
+      <span class="mast-cn">资料书架，由你自己装满</span>
+    </h1>
+    <p class="lede">遇到想留住的链接或文件，就收进这里。可以关联大模块，再用标签标出细分主题。现在有 <span id="source-total" data-source-total>—</span> 条资料；书架只显示你亲手添加的内容。</p>
+  </div>
+  <div class="shelf-art">
+    <svg viewBox="0 0 180 140" aria-hidden="true" focusable="false">
+      <g stroke="#5B1029" stroke-width="2" stroke-linejoin="round">
+        <rect x="18" y="52" width="30" height="62" fill="#C94A6C"/>
+        <rect x="52" y="40" width="26" height="74" fill="#FADDE6"/>
+        <rect x="82" y="58" width="34" height="56" fill="#EFA0B8"/>
+        <rect x="120" y="46" width="24" height="68" fill="#FFFBF0"/>
+        <rect x="12" y="114" width="150" height="9" fill="#E2758F"/>
+      </g>
+      <g stroke="#FFFBF0" stroke-width="2" stroke-linecap="round">
+        <path d="M24 64h18M24 72h18M58 52h14M58 60h14M88 70h22M88 78h22"/>
+      </g>
+      <g>
+        <path d="M132 44c-1-8 2-13 7-17" fill="none" stroke="#5B1029" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M133 43c5-4 10-5 17-4" fill="none" stroke="#5B1029" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="130" cy="30" r="8" fill="#E2758F" stroke="#5B1029" stroke-width="2"/>
+        <circle cx="145" cy="35" r="7" fill="#C94A6C" stroke="#5B1029" stroke-width="2"/>
+        <path d="M127 27c1-2 3-3 4-3" fill="none" stroke="#FFFBF0" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="gingham" role="presentation"></div>
+
+<section class="wrap source-compose" id="add-source" aria-labelledby="source-form-title">
+  <div class="source-compose-head">
+    <div><p class="eyebrow">Add to your shelf</p><h2 id="source-form-title">收下一条好资料</h2></div>
+    <p>给资料一个位置，再留一句自己的判断。</p>
+  </div>
+  <form id="source-form">
+    <div class="source-kind" role="group" aria-label="资料来源">
+      <button type="button" class="source-kind-btn" data-source-kind="link" aria-pressed="true">粘贴链接</button>
+      <button type="button" class="source-kind-btn" data-source-kind="file" aria-pressed="false">上传文件</button>
+    </div>
+    <div class="source-form-grid">
+      <label id="source-url-wrap">原始链接 <span aria-hidden="true">*</span><input id="source-url" name="url" type="url" inputmode="url" required placeholder="https://..."></label>
+      <label id="source-file-wrap" hidden>选择文件 <span aria-hidden="true">*</span><input id="source-file" name="file" type="file"></label>
+      <label>资料类型<select id="source-type" name="type"><option value="article">文章与视频</option><option value="doc">当前文档</option><option value="method">基础方法</option></select></label>
+      <label>关联大模块<select id="source-module" name="module"><option value="0">暂不关联模块</option></select></label>
+    </div>
+    <div class="source-title-detect"><span id="source-title-status" role="status" aria-live="polite">粘贴链接后会自动尝试识别标题。</span><button type="button" id="source-rename" hidden>修改标题</button></div>
+    <label class="source-title-manual" id="source-title-wrap" hidden>资料标题 <span aria-hidden="true">*</span><input id="source-title" name="title" type="text" maxlength="120" placeholder="识别不到时，给它起个名字"></label>
+    <div class="source-tags">
+      <label for="source-tag-input">细分标签 <span>可选已有标签，也可输入新标签</span></label>
+      <div class="source-tag-entry"><input id="source-tag-input" type="text" maxlength="24" list="source-tag-list" placeholder="例如：用户研究、RAG"><datalist id="source-tag-list"></datalist><button type="button" id="source-tag-add">添加标签</button></div>
+      <div id="source-tag-selected" class="source-tag-selected" aria-live="polite"></div>
+      <details class="source-tag-available"><summary>查看已有标签</summary><div id="source-tag-options"></div></details>
+      <a class="tag-manager-link" href="#tag-manager">管理标签 →</a>
+    </div>
+    <label class="source-note-label">我想记住什么 <span>选填</span><textarea id="source-note" name="note" maxlength="300" rows="2" placeholder="一句话就够：它能帮我解决哪个问题？"></textarea></label>
+    <div class="source-form-foot"><button class="btn" id="source-save" type="submit">加入我的书架</button><button class="btn btn-quiet" id="source-cancel" type="button" hidden>取消编辑</button><span id="source-form-status" role="status" aria-live="polite"></span></div>
+  </form>
+  <p class="source-local-note">链接在 GitHub 确认提交后公开同步；个人笔记与上传文件只保存在当前浏览器。<span id="source-sync-status" role="status"></span></p>
+</section>
+
+<section class="wrap tag-manager" id="tag-manager" aria-labelledby="tag-manager-title">
+  <div class="tag-manager-head">
+    <div><p class="eyebrow">Your labels</p><h2 id="tag-manager-title">标签管理</h2></div>
+    <p>删除标签前会请你确认。已关联资料的标签删除后，资料本身会保留。</p>
+  </div>
+  <form id="tag-manager-form" class="tag-manager-create">
+    <label for="tag-manager-input">新建标签</label>
+    <div><input id="tag-manager-input" type="text" maxlength="24" placeholder="例如：我的项目、设计案例"><button class="btn" type="submit">新建标签</button></div>
+    <p id="tag-manager-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="tag-manager-all">
+    <h3>全部标签 <span id="tag-all-count">0</span></h3>
+    <div id="tag-manager-list" class="tag-manager-list"></div>
+  </div>
+</section>
+
+<div class="controls" id="lib-controls">
+  <div class="wrap controls-grid">
+    <div>
+      <label class="field-label" for="lib-search">搜索资料</label>
+      <div class="search-shell">
+        <svg class="od-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.6 15.6 4.4 4.4" stroke-linecap="round"/></svg>
+        <input id="lib-search" type="search" placeholder="标题、标签、备注或网址" autocomplete="off">
+        <button type="button" class="clear-btn" id="lib-clear" hidden>清除</button>
+      </div>
+    </div>
+    <div>
+      <p class="field-label" id="lib-types-label">按资料类型筛选</p>
+      <div class="chips" id="lib-types" role="group" aria-labelledby="lib-types-label">
+        <button type="button" class="chip" data-type="all" aria-pressed="true">全部资料</button>
+        <button type="button" class="chip" data-type="method" aria-pressed="false"><span class="chip-no" data-count="method">—</span>基础方法</button>
+        <button type="button" class="chip" data-type="doc" aria-pressed="false"><span class="chip-no" data-count="doc">—</span>当前文档</button>
+        <button type="button" class="chip" data-type="article" aria-pressed="false"><span class="chip-no" data-count="article">—</span>文章与视频</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="lib-main">
+  <div class="wrap">
+    <p class="sr-only" role="status" aria-live="polite" id="lib-status"></p>
+    <p class="shelf-summary" id="lib-summary"></p>
+    <p class="source-undo" id="source-undo" role="status" aria-live="polite"></p>
+    <div id="lib-body"></div>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <div>
+      <p class="foot-brand">The AI PM Study Club</p>
+      <p class="foot-copy">你的个人资料书架。读过、用过、想再看，都可以留在这里。</p>
+    </div>
+    <div class="foot-meta">
+      <span>课程方案 v0.6</span>
+      <span>资料由你自己收藏</span>
+      <span>6 阶段 · 8 模块 · 80 单元</span>
+    </div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="course-compact.js"></script>
+<script src="public-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

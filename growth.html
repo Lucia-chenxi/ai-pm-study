@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的成长 · AI 产品经理学习手册</title>
+<meta name="description" content="收藏模块、写三分钟讲解笔记，全部只保存在本机浏览器，没有账号、没有虚构的进度与积分。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="growth">
+<a class="skip-link" href="#growth-main">跳到我的成长</a>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <path d="M24 18c-1-6 1-10 5-13" fill="none" stroke="#5B1029" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M25 18c3-4 7-5 14-4" fill="none" stroke="#5B1029" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M30 9c3-3 7-4 11-2-1 4-5 7-9 7-1 0-2 0-2-5z" fill="#C94A6C" stroke="#5B1029" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="17" cy="30" r="9" fill="#E2758F" stroke="#5B1029" stroke-width="2"/>
+        <circle cx="33" cy="33" r="8" fill="#C94A6C" stroke="#5B1029" stroke-width="2"/>
+        <path d="M14 27c1-2 3-3 5-3" fill="none" stroke="#FBF2DE" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M30 30c1-1 2-2 3-2" fill="none" stroke="#FBF2DE" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-en">THE AI PM STUDY CLUB</span>
+        <span class="brand-cn">AI 产品经理学习手册</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a class="nav-link" href="index.html">学习地图</a>
+      <a class="nav-link" href="library.html">资料书架</a>
+      <a class="nav-link" href="library.html#tag-manager">标签管理</a>
+      <a class="nav-link" href="growth.html" aria-current="page">我的成长</a>
+    </nav>
+    <p class="issue-tag"><span>ISSUE</span><span>06</span></p>
+  </div>
+</header>
+
+<div class="checker" role="presentation"></div>
+
+<nav class="subnav" aria-label="我的成长分区">
+  <div class="wrap subnav-inner">
+    <p class="subnav-label">我的成长</p>
+    <div class="subnav-links">
+      <a class="subnav-link" href="#fav-section" data-spy="fav-section">收藏的模块</a>
+      <a class="subnav-link" href="#note-section" data-spy="note-section">三分钟讲解笔记</a>
+    </div>
+    <a class="subnav-jump" href="index.html">去学习地图</a>
+  </div>
+</nav>
+
+<div class="wrap growth-head">
+  <div>
+    <p class="eyebrow">My club card · local only</p>
+    <h1>
+      <span class="mast-en">MY <em>GROWTH</em></span>
+      <span class="mast-cn">我的成长：从收藏到讲得出来</span>
+    </h1>
+    <p class="lede">这里只记录你自己做过的事：收藏了哪些模块、在哪些问题上写过三分钟讲解。没有账号、没有排行榜，也没有初始的分数和连胜——刚打开时它就是空的，这很正常。</p>
+  </div>
+  <aside class="club-card" aria-label="本机学习记录">
+    <h2>Club record</h2>
+    <div class="club-rows">
+      <div class="club-row"><span>收藏模块</span><strong id="stat-fav">0</strong></div>
+      <div class="club-row"><span>讲解笔记</span><strong id="stat-note">0</strong></div>
+      <div class="club-row"><span>存储位置</span><strong>本机</strong></div>
+    </div>
+  </aside>
+</div>
+
+<div class="gingham" role="presentation"></div>
+
+<main id="growth-main">
+  <div class="wrap">
+    <p class="sr-only" role="status" aria-live="polite" id="growth-status"></p>
+
+    <section class="growth-section" id="fav-section" aria-labelledby="fav-heading">
+      <div class="growth-section-head">
+        <h2 id="fav-heading">收藏的模块</h2>
+        <p class="growth-hint" id="fav-count-label">0 个模块</p>
+      </div>
+      <div class="fav-list" id="fav-list" hidden></div>
+      <div class="empty-block" id="fav-empty">
+        <h3>收藏夹还是空的</h3>
+        <p>去学习地图打开任意模块，点「收藏模块」，它就会出现在这里。收藏只存在这台设备的浏览器里，刷新后仍然保留，也可以随时移除。</p>
+        <a class="btn" href="index.html">去学习地图挑一个模块</a>
+      </div>
+    </section>
+
+    <section class="growth-section" id="note-section" aria-labelledby="note-heading">
+      <div class="growth-section-head">
+        <h2 id="note-heading">三分钟讲解笔记</h2>
+        <p class="growth-hint" id="note-count-label">0 条笔记</p>
+      </div>
+      <div class="note-grid" id="note-list" hidden></div>
+      <div class="empty-block" id="note-empty">
+        <h3>还没有讲解笔记</h3>
+        <p>打开任意模块，定位到「练习」分区，写下三分钟讲解的提纲。没有评分，也没有人批改——它的作用只是让你发现自己哪一步讲不清。</p>
+        <a class="btn" href="index.html">打开一个模块开始讲解</a>
+      </div>
+    </section>
+
+    <p class="local-note"><b>关于保存：</b><span id="storage-status">收藏与笔记保存在这台设备的 localStorage 中，刷新或重开浏览器都还在；清除站点数据会一并删除。</span> 这里没有后端，也没有账号，换一台设备不会同步。</p>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <div>
+      <p class="foot-brand">The AI PM Study Club</p>
+      <p class="foot-copy">进度由你自己判断，页面不替你打分。第一个真实项目尚未确定，作品与结果留待之后补充。</p>
+    </div>
+    <div class="foot-meta">
+      <span>课程方案 v0.6</span>
+      <span>资料由你自己收藏</span>
+      <span>6 阶段 · 8 模块 · 80 单元</span>
+    </div>
+  </div>
+</footer>
+
+<dialog class="module-dialog" id="module-dialog" aria-labelledby="dlg-title"></dialog>
+
+<script src="data.js"></script>
+<script src="course-compact.js"></script>
+<script src="public-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
