@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>学习地图 · AI 产品经理学习手册</title>
-<meta name="description" content="从零产品基础到能独立推进应用型 AI 产品的个人学习路径：6 个阶段、8 个模块、80 个学习单元。">
+<meta name="description" content="从零产品基础到能独立推进应用型 AI 产品的个人学习路径：按阶段学习，自己管理模块、标签和资料。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
@@ -33,6 +33,7 @@
     <nav class="nav" aria-label="主导航">
       <a class="nav-link" href="index.html" aria-current="page">学习地图</a>
       <a class="nav-link" href="library.html">资料书架</a>
+      <a class="nav-link" href="library.html#module-manager">模块管理</a>
       <a class="nav-link" href="library.html#tag-manager">标签管理</a>
       <a class="nav-link" href="growth.html">我的成长</a>
     </nav>
@@ -65,7 +66,7 @@
         <span class="mast-en">THE AI PM<br><em>STUDY CLUB</em></span>
         <span class="mast-cn">从零产品基础，到能独立推进 AI 产品</span>
       </h1>
-      <p class="lede">6 个阶段、8 个大模块、80 个学习单元。从找到问题到做出作品，细分主题收进标签里；资料由你自己收集。第一个真实项目还没定，所以这里不写虚构的用户、成绩或作品。</p>
+      <p class="lede">6 个阶段，<span data-module-count>8</span> 个可管理的大模块。从找到问题到做出作品，细分主题收进标签里；资料由你自己收集。第一个真实项目还没定，所以这里不写虚构的用户、成绩或作品。</p>
     </div>
     <aside class="issue-card" aria-label="手册信息">
       <div class="issue-art">
@@ -90,7 +91,7 @@
       </div>
       <dl class="issue-rows">
         <div class="issue-row"><dt>课程版本</dt><dd>v0.6</dd></div>
-        <div class="issue-row"><dt>阶段 / 模块</dt><dd>6 阶段 · 8 模块 · 80 单元</dd></div>
+        <div class="issue-row"><dt>阶段 / 模块</dt><dd data-module-stats>6 阶段 · 8 模块 · 80 单元</dd></div>
         <div class="issue-row"><dt>资料书架</dt><dd>由你自己添加</dd></div>
         <div class="issue-row"><dt>收藏</dt><dd>仅存本机 · 无账号</dd></div>
       </dl>
@@ -104,13 +105,13 @@
 <div class="controls" id="map-controls">
   <div class="wrap controls-grid">
     <div>
-      <label class="field-label" for="map-search">搜索全部 8 个模块与细分主题</label>
+      <label class="field-label" for="map-search">搜索全部模块与细分主题</label>
       <div class="search-shell">
         <svg class="od-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.6 15.6 4.4 4.4" stroke-linecap="round"/></svg>
         <input id="map-search" type="search" placeholder="模块、标签、单元或资料标题" autocomplete="off" aria-describedby="map-search-hint">
         <button type="button" class="clear-btn" id="map-clear" hidden>清除</button>
       </div>
-      <span class="sr-only" id="map-search-hint">搜索范围是全部六个阶段的 8 个模块及主题标签，不受当前阶段筛选影响。</span>
+      <span class="sr-only" id="map-search-hint">搜索范围是全部六个阶段的可见模块及主题标签，不受当前阶段筛选影响。</span>
     </div>
     <div>
       <p class="field-label" id="stage-rail-label">按阶段查看</p>
@@ -143,7 +144,7 @@
     <div class="foot-meta">
       <span>课程方案 v0.6</span>
       <span>资料由你自己收藏</span>
-      <span>6 阶段 · 8 模块 · 80 单元</span>
+      <span data-module-stats>6 阶段 · 8 模块 · 80 单元</span>
     </div>
   </div>
 </footer>

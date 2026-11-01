@@ -2,6 +2,96 @@
   "use strict";
 
   var COURSE = window.COURSE;
+  var BASE_MODULES = COURSE.modules.slice();
+  var KEY_MODULES = "aipm08.modules";
+  var moduleConfig = { names: {}, hidden: [], custom: [], nextId: 9, updatedAt: "" };
+
+  function allModules() { return COURSE.modules; }
+  function visibleModules() {
+    return allModules().filter(function (m) { return !m.hidden; }).sort(function (a, b) {
+      return stageOf(a.n).n - stageOf(b.n).n || a.n - b.n;
+    });
+  }
+
+  function applyModuleConfig(config) {
+    moduleConfig = config;
+    COURSE.modules = BASE_MODULES.map(function (m) {
+      return Object.assign({}, m, { title: config.names[m.n] || m.title, hidden: config.hidden.indexOf(m.n) !== -1 });
+    }).concat(config.custom.map(function (item) {
+      return {
+        n: item.n, title: item.title, stage: item.stage, hidden: config.hidden.indexOf(item.n) !== -1,
+        question: "我想在「" + item.title + "」学会什么？", tags: [], units: [],
+        artifact: "从这个主题里选一个真实问题，做出可展示的练习。",
+        completion: "能用一个具体例子讲清自己的判断。",
+        limit: "只收集当前用得上的内容。",
+        source_policy: "由你选择资料和细分标签。"
+      };
+    }));
+  }
+
+  function cleanModuleConfig(value) {
+    var raw = value && typeof value === "object" ? value : {};
+    var names = {};
+    Object.keys(raw.names || {}).forEach(function (key) {
+      var n = Number(key), title = String(raw.names[key] || "").trim().slice(0, 32);
+      if (Number.isInteger(n) && n >= 1 && n <= 8 && title) names[n] = title;
+    });
+    var hidden = Array.isArray(raw.hidden) ? raw.hidden.filter(function (n) {
+      return Number.isInteger(n) && n >= 1 && n <= 9999;
+    }) : [];
+    var seen = {};
+    var custom = Array.isArray(raw.custom) ? raw.custom.filter(function (item) {
+      return item && Number.isInteger(item.n) && item.n >= 9 && item.n <= 9999 &&
+        !seen[item.n] && typeof item.title === "string" && item.title.trim() &&
+        Number.isInteger(item.stage) && item.stage >= 1 && item.stage <= 6 && (seen[item.n] = true);
+    }).map(function (item) {
+      return { n: item.n, title: item.title.trim().slice(0, 32), stage: item.stage };
+    }) : [];
+    return { names: names, hidden: Array.from(new Set(hidden)).filter(function (n) { return n <= 8 || !!seen[n]; }), custom: custom,
+      nextId: Math.max(9, Number(raw.nextId) || 9, custom.reduce(function (max, m) { return Math.max(max, m.n + 1); }, 9)),
+      updatedAt: typeof raw.updatedAt === "string" ? raw.updatedAt : "" };
+  }
+
+  function saveModuleConfig(config) {
+    config.updatedAt = new Date().toISOString();
+    applyModuleConfig(cleanModuleConfig(config));
+    try { window.localStorage.setItem(KEY_MODULES, JSON.stringify(moduleConfig)); } catch (e) {}
+  }
+
+  async function loadModuleConfig() {
+    var local;
+    try { local = cleanModuleConfig(JSON.parse(window.localStorage.getItem(KEY_MODULES) || "{}")); }
+    catch (e) { local = cleanModuleConfig({}); }
+    var chosen = local;
+    try {
+      var response = await fetch("data/modules.json?t=" + Date.now(), { cache: "no-store" });
+      if (!response.ok) throw new Error("module data unavailable");
+      var remote = cleanModuleConfig(await response.json());
+      if (remote.updatedAt >= local.updatedAt) chosen = remote;
+      if (remote.updatedAt >= local.updatedAt) {
+        window.localStorage.setItem(KEY_MODULES, JSON.stringify(remote));
+        if (remote.updatedAt && remote.updatedAt === local.updatedAt) window.localStorage.removeItem("aipm08.pendingModule");
+      }
+    } catch (e) {}
+    applyModuleConfig(chosen);
+  }
+
+  function adjacentModuleN(n, direction) {
+    var list = visibleModules();
+    var index = list.findIndex(function (m) { return m.n === n; });
+    return list[index + direction] ? list[index + direction].n : 0;
+  }
+
+  function updateModuleStats() {
+    var modules = visibleModules();
+    var units = modules.reduce(function (sum, m) { return sum + m.units.length; }, 0);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-module-count]"), function (el) {
+      el.textContent = String(modules.length);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-module-stats]"), function (el) {
+      el.textContent = "6 阶段 · " + modules.length + " 模块 · " + units + " 单元";
+    });
+  }
 
   /* ---------------- icons ---------------- */
 
@@ -54,6 +144,8 @@
   }
 
   function stageOf(n) {
+    var custom = allModules().filter(function (m) { return m.n === n && m.stage; })[0];
+    if (custom) return COURSE.stages[custom.stage - 1];
     for (var i = 0; i < COURSE.stages.length; i++) {
       var s = COURSE.stages[i];
       if (n >= s.range[0] && n <= s.range[1]) return s;
@@ -62,12 +154,12 @@
   }
 
   function moduleOf(n) {
-    return COURSE.modules.filter(function (m) { return m.n === n; })[0] || null;
+    return visibleModules().filter(function (m) { return m.n === n; })[0] || null;
   }
 
   function modulesOfStage(stage) {
-    return COURSE.modules.filter(function (m) {
-      return m.n >= stage.range[0] && m.n <= stage.range[1];
+    return visibleModules().filter(function (m) {
+      return stageOf(m.n).n === stage.n;
     });
   }
 
@@ -164,6 +256,7 @@
   var KEY_PENDING_UPSERTS = "aipm07.pendingUpserts";
   var PUBLIC_REPO = "Lucia-chenxi/ai-pm-study";
   var publicSources = [];
+  var publicSourcesUnavailable = false;
   var mem = { favorites: null, notes: null, sources: null, tags: null, hiddenTags: null };
   var storageOK = (function () {
     try {
@@ -189,7 +282,7 @@
         }
         if (Array.isArray(parsed)) {
           list = parsed.filter(function (n) {
-            return Number.isInteger(n) && n >= 1 && n <= COURSE.modules.length;
+            return Number.isInteger(n) && allModules().some(function (m) { return m.n === n; });
           });
         }
       } catch (e) {
@@ -468,12 +561,12 @@
   }
 
   function githubIssueUrl(change) {
-    var summary = change.action === "delete"
-      ? "删除公开资料：" + (change.title || change.id)
-      : "保存公开资料：" + change.item.title + "\n" + change.item.url + "\n标签：" + change.item.tags.join("、");
+    var summary = change.action === "module_config" ? "更新学习模块：" + change.summary :
+      change.action === "delete" ? "删除公开资料：" + (change.title || change.id) :
+      "保存公开资料：" + change.item.title + "\n" + change.item.url + "\n标签：" + change.item.tags.join("、");
     var body = summary + "\n\n<!-- AIPM_SOURCE\n" + JSON.stringify(change) + "\nAIPM_SOURCE -->";
     return "https://github.com/" + PUBLIC_REPO + "/issues/new?title=" +
-      encodeURIComponent("更新公开书架") + "&body=" + encodeURIComponent(body);
+      encodeURIComponent(change.action === "module_config" ? "更新学习模块" : "更新公开书架") + "&body=" + encodeURIComponent(body);
   }
 
   function pendingDeletes() {
@@ -496,6 +589,27 @@
     var list = pendingDeletes().filter(function (item) { return item !== id; });
     if (pending) list.push(id);
     window.localStorage.setItem(KEY_PENDING_DELETES, JSON.stringify(list));
+  }
+
+  async function loadPublicSources() {
+    try {
+      var response = await fetch("data/resources.json?t=" + Date.now(), { cache: "no-store" });
+      if (!response.ok) throw new Error("public data unavailable");
+      var sources = await response.json();
+      publicSources = Array.isArray(sources) ? sources : [];
+      pendingUpserts().forEach(function (id) {
+        var local = readSources().filter(function (source) { return source.id === id; })[0];
+        var remote = publicSources.filter(function (source) { return source.id === id; })[0];
+        if (local && remote && JSON.stringify(window.AIPMPublicData.cleanSource(local)) === JSON.stringify(window.AIPMPublicData.cleanSource(remote))) {
+          setPendingUpsert(id, false);
+        }
+      });
+      var remaining = pendingDeletes().filter(function (id) {
+        return publicSources.some(function (source) { return source.id === id; });
+      });
+      window.localStorage.setItem(KEY_PENDING_DELETES, JSON.stringify(remaining));
+      mem.tags = null;
+    } catch (e) { publicSourcesUnavailable = true; }
   }
 
   /* ---------------- module dialog ---------------- */
@@ -622,9 +736,9 @@
       "</section>" +
       "</div>" +
       '<footer class="dlg-foot">' +
-      '<button type="button" class="foot-btn" data-prev' + (m.n === 1 ? " disabled" : "") + ">← 上一模块</button>" +
+      '<button type="button" class="foot-btn" data-prev' + (!adjacentModuleN(m.n, -1) ? " disabled" : "") + ">← 上一模块</button>" +
       '<button type="button" class="foot-btn" data-close>关闭面板</button>' +
-      '<button type="button" class="foot-btn" data-next' + (m.n === COURSE.modules.length ? " disabled" : "") + ">下一模块 →</button>" +
+      '<button type="button" class="foot-btn" data-next' + (!adjacentModuleN(m.n, 1) ? " disabled" : "") + ">下一模块 →</button>" +
       "</footer>" +
       "</div>"
     );
@@ -751,12 +865,12 @@
       }
       var prev = e.target.closest("[data-prev]");
       if (prev) {
-        openModule(dlgState.current - 1, null, dlgState.tab);
+        openModule(adjacentModuleN(dlgState.current, -1), null, dlgState.tab);
         return;
       }
       var next = e.target.closest("[data-next]");
       if (next) {
-        openModule(dlgState.current + 1, null, dlgState.tab);
+        openModule(adjacentModuleN(dlgState.current, 1), null, dlgState.tab);
         return;
       }
     });
@@ -852,7 +966,7 @@
     var needle = query.trim().toLowerCase();
     if (!needle) return [];
     var out = [];
-    COURSE.modules.forEach(function (m) {
+    visibleModules().forEach(function (m) {
       var reasons = [];
       if (m.title.toLowerCase().indexOf(needle) !== -1) reasons.push("标题");
       if (m.question.toLowerCase().indexOf(needle) !== -1) reasons.push("核心问题");
@@ -887,8 +1001,8 @@
       var head =
         '<div class="result-bar">' +
         '<h2 class="result-title">搜索结果</h2>' +
-        '<p class="result-count">' + results.length + " / " + COURSE.modules.length +
-        " 个模块命中「" + esc(q) + "」 · 范围：全部 " + COURSE.modules.length + " 个模块</p>" +
+        '<p class="result-count">' + results.length + " / " + visibleModules().length +
+        " 个模块命中「" + esc(q) + "」 · 范围：全部 " + visibleModules().length + " 个模块</p>" +
         "</div>";
       if (!results.length) {
         body.innerHTML =
@@ -913,7 +1027,7 @@
       ? COURSE.stages
       : COURSE.stages.filter(function (s) { return s.n === mapState.stage; });
     body.innerHTML = stages.map(stageSectionHTML).join("");
-    announce("map-status", "正在显示 " + (mapState.stage === "all" ? "全部六个阶段" : "阶段 " + pad2(mapState.stage)) + "，共 " + COURSE.modules.length + " 个模块");
+    announce("map-status", "正在显示 " + (mapState.stage === "all" ? "全部六个阶段" : "阶段 " + pad2(mapState.stage)) + "，共 " + visibleModules().length + " 个模块");
   }
 
   function syncStageRail() {
@@ -1171,15 +1285,155 @@
     var tagManagerStatus = document.getElementById("tag-manager-status");
     var tagManagerList = document.getElementById("tag-manager-list");
     var managerEditing = "";
+    var moduleForm = document.getElementById("module-manager-form");
+    var moduleInput = document.getElementById("module-manager-input");
+    var moduleStage = document.getElementById("module-manager-stage");
+    var moduleStatus = document.getElementById("module-manager-status");
+    var moduleList = document.getElementById("module-manager-list");
+    var moduleHiddenList = document.getElementById("module-hidden-list");
+    var moduleEditing = 0;
     var kind = "link", editingId = "", editingSnapshot = "", detectedTitle = "", selectedTags = [], removed = null, removedFile = null;
     var identifySeq = 0, identifyTimer = null, identifyPromise = null;
 
-    COURSE.modules.forEach(function (m) {
-      var option = document.createElement("option");
-      option.value = String(m.n);
-      option.textContent = "模块 " + pad2(m.n) + " · " + m.title;
-      module.appendChild(option);
+    moduleStage.innerHTML = COURSE.stages.map(function (stage) {
+      return '<option value="' + stage.n + '">阶段 ' + pad2(stage.n) + ' · ' + esc(stage.name) + '</option>';
+    }).join("");
+
+    function renderModuleSelect() {
+      var selected = module.value;
+      module.innerHTML = '<option value="0">暂不关联模块</option>' + visibleModules().map(function (m) {
+        return '<option value="' + m.n + '">模块 ' + pad2(m.n) + ' · ' + esc(m.title) + '</option>';
+      }).join("");
+      module.value = moduleOf(Number(selected)) ? selected : "0";
+    }
+
+    function moduleUseCount(n) {
+      return getSources().filter(function (source) { return Number(source.moduleN) === n; }).length;
+    }
+
+    function renderModuleManager() {
+      var active = visibleModules(), hidden = allModules().filter(function (m) { return m.hidden; });
+      document.getElementById("module-all-count").textContent = String(active.length);
+      moduleList.innerHTML = active.map(function (m) {
+        if (moduleEditing === m.n) {
+          return '<div class="module-manager-item"><input data-module-edit-input maxlength="32" aria-label="模块新名称" value="' + esc(m.title) + '">' +
+            (m.n > 8 ? '<select data-module-edit-stage aria-label="调整所属阶段">' + COURSE.stages.map(function (stage) {
+              return '<option value="' + stage.n + '"' + (stage.n === m.stage ? ' selected' : '') + '>阶段 ' + pad2(stage.n) + '</option>';
+            }).join('') + '</select>' : '') +
+            '<button type="button" data-module-save="' + m.n + '">保存</button><button type="button" data-module-cancel>取消</button></div>';
+        }
+        return '<div class="module-manager-item"><span class="module-name">' + esc(m.title) +
+          '<small>阶段 ' + pad2(stageOf(m.n).n) + ' · ' + moduleUseCount(m.n) + ' 条资料</small></span>' +
+          '<button type="button" data-module-rename="' + m.n + '" aria-label="改名模块 ' + esc(m.title) + '">改名</button>' +
+          '<button type="button" data-module-delete="' + m.n + '" aria-label="删除模块 ' + esc(m.title) + '">删除</button></div>';
+      }).join("") || '<p class="source-empty">还没有模块。可以新建一个。</p>';
+      document.getElementById("module-hidden-wrap").hidden = hidden.length === 0;
+      moduleHiddenList.innerHTML = hidden.map(function (m) {
+        return '<div class="module-manager-item"><span class="module-name">' + esc(m.title) +
+          '<small>阶段 ' + pad2(stageOf(m.n).n) + ' · 已从学习地图隐藏</small></span>' +
+          '<button type="button" data-module-restore="' + m.n + '">恢复</button></div>';
+      }).join("");
+      var pending = window.localStorage.getItem("aipm08.pendingModule");
+      if (pending) {
+        try {
+          var change = JSON.parse(pending);
+          moduleStatus.innerHTML = '本机已更新。<a href="' + esc(githubIssueUrl(change)) + '">前往 GitHub 确认公开同步</a>';
+        } catch (e) {}
+      }
+    }
+
+    function publishModules(summary) {
+      var change = { action: "module_config", summary: summary, config: moduleConfig };
+      try { window.localStorage.setItem("aipm08.pendingModule", JSON.stringify(change)); } catch (e) {}
+      renderModuleSelect();
+      renderModuleManager();
+      renderLibrary();
+      updateModuleStats();
+      window.location.assign(githubIssueUrl(change));
+    }
+
+    moduleForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var title = moduleInput.value.trim();
+      if (!title) { moduleStatus.textContent = "先给模块起个名字。"; return; }
+      if (allModules().some(function (m) { return m.title.toLowerCase() === title.toLowerCase(); })) {
+        moduleStatus.textContent = "已有同名模块，可以直接使用或恢复。"; return;
+      }
+      if (moduleConfig.nextId > 9999) { moduleStatus.textContent = "模块编号已用完。"; return; }
+      var config = cleanModuleConfig(moduleConfig);
+      config.custom.push({ n: config.nextId++, title: title, stage: Number(moduleStage.value) || 1 });
+      saveModuleConfig(config);
+      moduleInput.value = "";
+      publishModules("新建模块「" + title + "」");
     });
+
+    document.getElementById("module-manager").addEventListener("click", function (e) {
+      var renameModule = e.target.closest("[data-module-rename]");
+      if (renameModule) {
+        moduleEditing = Number(renameModule.dataset.moduleRename);
+        renderModuleManager();
+        moduleList.querySelector("[data-module-edit-input]").focus();
+        return;
+      }
+      if (e.target.closest("[data-module-cancel]")) { moduleEditing = 0; renderModuleManager(); return; }
+      var saveModule = e.target.closest("[data-module-save]");
+      if (saveModule) {
+        var n = Number(saveModule.dataset.moduleSave);
+        var nextTitle = moduleList.querySelector("[data-module-edit-input]").value.trim();
+        if (!nextTitle) { moduleStatus.textContent = "模块名称不能为空。"; return; }
+        if (allModules().some(function (m) { return m.n !== n && m.title.toLowerCase() === nextTitle.toLowerCase(); })) {
+          moduleStatus.textContent = "已有同名模块，请换一个名字。"; return;
+        }
+        var config = cleanModuleConfig(moduleConfig);
+        if (n <= 8) config.names[n] = nextTitle;
+        else config.custom = config.custom.map(function (item) { return item.n === n ? Object.assign({}, item, {
+          title: nextTitle, stage: Number(moduleList.querySelector("[data-module-edit-stage]").value)
+        }) : item; });
+        saveModuleConfig(config);
+        moduleEditing = 0;
+        publishModules("改名模块「" + nextTitle + "」");
+        return;
+      }
+      var deleteModule = e.target.closest("[data-module-delete]");
+      if (deleteModule) {
+        var deleteN = Number(deleteModule.dataset.moduleDelete);
+        var target = moduleOf(deleteN);
+        if (!target) return;
+        var count = moduleUseCount(deleteN);
+        if (!window.confirm("确定删除模块“" + target.title + "”吗？" +
+          (count ? "它关联了 " + count + " 条资料；删除后资料会变为未关联，资料本身保留。" : "") +
+          "模块内容和本机笔记会保留在“已隐藏的模块”，可以恢复。")) return;
+        var config = cleanModuleConfig(moduleConfig);
+        config.hidden.push(deleteN);
+        var changed = getSources().map(function (source) {
+          if (Number(source.moduleN) !== deleteN) return source;
+          if (source.kind !== "file") setPendingUpsert(source.id, true);
+          return Object.assign({}, source, { moduleN: 0 });
+        });
+        writeSources(changed);
+        saveModuleConfig(config);
+        publishModules("删除模块「" + target.title + "」");
+        return;
+      }
+      var restoreModule = e.target.closest("[data-module-restore]");
+      if (restoreModule) {
+        var restoreN = Number(restoreModule.dataset.moduleRestore);
+        var restore = allModules().filter(function (m) { return m.n === restoreN; })[0];
+        var config = cleanModuleConfig(moduleConfig);
+        config.hidden = config.hidden.filter(function (n) { return n !== restoreN; });
+        saveModuleConfig(config);
+        publishModules("恢复模块「" + (restore ? restore.title : restoreN) + "」");
+      }
+    });
+    document.getElementById("module-manager").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && e.target.matches("[data-module-edit-input]")) {
+        e.preventDefault();
+        moduleList.querySelector("[data-module-save]").click();
+      }
+    });
+
+    renderModuleSelect();
+    renderModuleManager();
 
     function renderTags() {
       tagList.innerHTML = readTags().map(function (tag) { return '<option value="' + esc(tag) + '"></option>'; }).join("");
@@ -1624,33 +1878,15 @@
     });
 
     renderLibrary();
-    fetch("data/resources.json?t=" + Date.now(), { cache: "no-store" }).then(function (response) {
-      if (!response.ok) throw new Error("public data unavailable");
-      return response.json();
-    }).then(function (sources) {
-      publicSources = Array.isArray(sources) ? sources : [];
-      pendingUpserts().forEach(function (id) {
-        var local = readSources().filter(function (source) { return source.id === id; })[0];
-        var remote = publicSources.filter(function (source) { return source.id === id; })[0];
-        if (local && remote && JSON.stringify(window.AIPMPublicData.cleanSource(local)) === JSON.stringify(window.AIPMPublicData.cleanSource(remote))) {
-          setPendingUpsert(id, false);
-        }
-      });
-      var remaining = pendingDeletes().filter(function (id) {
-        return publicSources.some(function (source) { return source.id === id; });
-      });
-      window.localStorage.setItem(KEY_PENDING_DELETES, JSON.stringify(remaining));
-      mem.tags = null;
-      renderTags();
-      renderLibrary();
-    }).catch(function () {
-      var sync = document.getElementById("source-sync-status");
-      if (sync) sync.textContent = "公开书架暂时无法读取，请稍后刷新。";
-    });
+    if (publicSourcesUnavailable) document.getElementById("source-sync-status").textContent = "公开书架暂时无法读取，请稍后刷新。";
 
     window.addEventListener("storage", function (e) {
       if (e.key === KEY_SOURCES) { mem.sources = null; renderLibrary(); renderTagManager(); }
       if (e.key === KEY_TAGS || e.key === KEY_HIDDEN_TAGS) { mem.tags = null; mem.hiddenTags = null; renderTags(); }
+      if (e.key === KEY_MODULES) {
+        try { applyModuleConfig(cleanModuleConfig(JSON.parse(e.newValue || "{}"))); } catch (error) {}
+        renderModuleSelect(); renderModuleManager(); renderLibrary(); updateModuleStats();
+      }
     });
 
     var subnav = document.querySelector(".subnav");
@@ -1718,7 +1954,7 @@
   }
 
   function renderGrowth() {
-    var favs = Store.favorites();
+    var favs = Store.favorites().filter(function (n) { return !!moduleOf(n); });
     var notes = Store.notes();
     var noteNums = Object.keys(notes)
       .map(Number)
@@ -1910,13 +2146,14 @@
     var saved = Store.note(m.n);
     var noteText = saved ? saved.text : "";
     var favOn = Store.isFav(m.n);
-    var prev = m.n > 1 ? moduleHref(m.n - 1) : "";
-    var next = m.n < COURSE.modules.length ? moduleHref(m.n + 1) : "";
+    var prevN = adjacentModuleN(m.n, -1), nextN = adjacentModuleN(m.n, 1);
+    var prev = prevN ? moduleHref(prevN) : "";
+    var next = nextN ? moduleHref(nextN) : "";
 
     var hero =
       '<div class="wrap mp-hero">' +
       '<p class="mp-kicker"><a href="index.html#stage-' + st.n + '">阶段 ' + pad2(st.n) + " · " + esc(st.name) +
-      "</a><span class=\"mp-sep\">/</span><span>模块 " + pad2(m.n) + " / " + COURSE.modules.length + "</span></p>" +
+      "</a><span class=\"mp-sep\">/</span><span>模块 " + pad2(m.n) + " / " + visibleModules().length + "</span></p>" +
       '<h1 class="mp-title">' + esc(m.title) + "</h1>" +
       '<p class="mp-question">' + esc(m.question) + "</p>" +
       '<div class="mp-topic-tags">' + m.tags.map(function (tag) { return '<span># ' + esc(tag) + '</span>'; }).join("") + '</div>' +
@@ -2013,7 +2250,7 @@
         ? '<a class="btn btn-ghost" href="' + next + '">下一模块 →</a>'
         : '<span class="btn btn-ghost is-disabled" aria-disabled="true">下一模块 →</span>') +
       "</div>" +
-      '<p class="mp-foot-meta">模块 ' + pad2(m.n) + " / " + COURSE.modules.length + " · 课程方案 v0.6 · " +
+      '<p class="mp-foot-meta">模块 ' + pad2(m.n) + " / " + visibleModules().length + " · 课程方案 v0.6 · " +
       esc(COURSE.checkedLabel) + "</p>";
 
     return { hero: hero, nav: nav, body: body, foot: foot };
@@ -2037,15 +2274,14 @@
         '<p class="mp-kicker">Module not found</p>' +
         '<h1 class="mp-title">没有找到这个模块</h1>' +
         '<p class="mp-question">地址里的模块编号是「' + esc(params.get("m") || "空") +
-        "」，本手册只有 01–20 共 " + COURSE.modules.length + " 个模块。</p>" +
+        "」，当前学习地图没有这个模块。</p>" +
         "</div>";
       navEl.innerHTML = "";
       footEl.innerHTML = "";
       bodyEl.innerHTML =
         '<div class="empty-block mp-empty">' +
         "<h3>换一个模块，或回到学习地图</h3>" +
-        "<p>每个模块都有固定的编号；直接访问时请使用 module.html?m=1 到 module.html?m=" +
-        COURSE.modules.length + " 之间的地址。</p>" +
+        "<p>请从学习地图选择一个当前可见的模块。</p>" +
         '<a class="btn" href="index.html">回到学习地图</a>' +
         "</div>";
       announce("module-status", "没有找到这个模块");
@@ -2131,7 +2367,9 @@
 
   /* ---------------- boot ---------------- */
 
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", async function () {
+    await Promise.all([loadModuleConfig(), loadPublicSources()]);
+    updateModuleStats();
     document.addEventListener("click", async function (e) {
       var button = e.target.closest("[data-open-file]");
       if (!button) return;

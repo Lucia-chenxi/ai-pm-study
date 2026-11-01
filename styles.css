@@ -1355,6 +1355,8 @@ details.disclosure li b { color: var(--ink); }
 .tag-manager-create input, .tag-manager-edit input { flex: 1; min-width: 0; border: 1px solid var(--pink-400); background: var(--paper-light); padding: 9px 11px; font: 14px var(--font-body); color: var(--ink); }
 .tag-manager-create .btn { flex: none; }
 #tag-manager-status { min-height: 20px; margin-top: 6px; color: var(--cherry); font-size: 12px; }
+#module-manager-status { min-height: 20px; margin-top: 6px; color: var(--cherry); font-size: 12px; }
+.tag-manager-create select { min-width: 150px; border: 1px solid var(--pink-400); background: var(--paper-light); padding: 9px 11px; font: 13px var(--font-body); color: var(--ink); }
 .tag-manager-all { margin-top: 17px; }
 .tag-manager-all h3 { padding-bottom: 8px; border-bottom: 1px solid var(--pink-300); color: var(--cherry-deep); font-size: 15px; }
 .tag-manager-all h3 span { margin-left: 5px; color: var(--pink-ink); font-size: 12px; }
@@ -1369,6 +1371,14 @@ details.disclosure li b { color: var(--ink); }
 .tag-manager-item > button[data-manager-delete] { font-size: 17px; line-height: 1; }
 .tag-manager-edit { display: flex; align-items: center; gap: 7px; padding: 4px; }
 .tag-manager-edit input { width: 145px; }
+.module-manager-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; padding-top: 10px; }
+.module-manager-item { display: flex; align-items: center; min-height: 46px; border: 1px solid var(--pink-300); background: var(--paper-light); color: var(--cherry-deep); font: 13px var(--font-body); }
+.module-manager-item .module-name { flex: 1; min-width: 0; padding: 8px 10px; }
+.module-manager-item small { display: block; margin-top: 2px; color: var(--ink-faint); font-size: 11px; }
+.module-manager-item button { align-self: stretch; border: 0; border-left: 1px solid var(--pink-300); background: none; color: var(--cherry); padding: 7px 9px; font: 12px var(--font-body); cursor: pointer; }
+.module-manager-item button:hover { background: var(--pink-100); }
+.module-manager-item input { flex: 1; min-width: 0; margin: 5px; border: 1px solid var(--pink-400); background: var(--paper); padding: 7px; font: 13px var(--font-body); }
+.module-manager-item select { max-width: 100px; border: 1px solid var(--pink-400); background: var(--paper); padding: 7px 3px; font: 12px var(--font-body); color: var(--ink); }
 
 .shelf-head {
   display: grid;

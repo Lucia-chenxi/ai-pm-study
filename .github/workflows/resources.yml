@@ -10,7 +10,7 @@ permissions:
   issues: write
 jobs:
   save:
-    if: github.event.issue.user.login == github.repository_owner && github.event.issue.title == '更新公开书架' && contains(github.event.issue.body, '<!-- AIPM_SOURCE')
+    if: github.event.issue.user.login == github.repository_owner && (github.event.issue.title == '更新公开书架' || github.event.issue.title == '更新学习模块') && contains(github.event.issue.body, '<!-- AIPM_SOURCE')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Apply resource change
+      - name: Apply site data change
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -29,4 +29,4 @@ jobs:
       - name: Close request
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close "${{ github.event.issue.number }}" --comment "资料已写入公开书架。网页更新可能需要几分钟。"
+        run: gh issue close "${{ github.event.issue.number }}" --comment "更改已写入网站数据。网页更新可能需要几分钟。"

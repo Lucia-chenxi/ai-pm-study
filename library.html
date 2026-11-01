@@ -33,6 +33,7 @@
     <nav class="nav" aria-label="主导航">
       <a class="nav-link" href="index.html">学习地图</a>
       <a class="nav-link" href="library.html" aria-current="page">资料书架</a>
+      <a class="nav-link" href="library.html#module-manager">模块管理</a>
       <a class="nav-link" href="library.html#tag-manager">标签管理</a>
       <a class="nav-link" href="growth.html">我的成长</a>
     </nav>
@@ -46,6 +47,7 @@
   <div class="wrap subnav-inner">
     <p class="subnav-label">资料书架</p>
     <div class="subnav-links">
+      <a class="subnav-link" href="#module-manager" data-spy="module-manager">模块管理</a>
       <a class="subnav-link" href="#tag-manager" data-spy="tag-manager">标签管理</a>
       <a class="subnav-link" href="#type-doc" data-spy="type-doc" data-jump-type="doc">当前文档<span class="subnav-count" data-count="doc">—</span></a>
       <a class="subnav-link" href="#type-article" data-spy="type-article" data-jump-type="article">文章与视频<span class="subnav-count" data-count="article">—</span></a>
@@ -103,7 +105,7 @@
       <label id="source-url-wrap">原始链接 <span aria-hidden="true">*</span><input id="source-url" name="url" type="url" inputmode="url" required placeholder="https://..."></label>
       <label id="source-file-wrap" hidden>选择文件 <span aria-hidden="true">*</span><input id="source-file" name="file" type="file"></label>
       <label>资料类型<select id="source-type" name="type"><option value="article">文章与视频</option><option value="doc">当前文档</option><option value="method">基础方法</option></select></label>
-      <label>关联大模块<select id="source-module" name="module"><option value="0">暂不关联模块</option></select></label>
+      <label>关联大模块<select id="source-module" name="module"><option value="0">暂不关联模块</option></select><a class="tag-manager-link" href="#module-manager">管理模块</a></label>
     </div>
     <div class="source-title-detect"><span id="source-title-status" role="status" aria-live="polite">粘贴链接后会自动尝试识别标题。</span><button type="button" id="source-rename" hidden>修改标题</button></div>
     <label class="source-title-manual" id="source-title-wrap" hidden>资料标题 <span aria-hidden="true">*</span><input id="source-title" name="title" type="text" maxlength="120" placeholder="识别不到时，给它起个名字"></label>
@@ -117,7 +119,27 @@
     <label class="source-note-label">我想记住什么 <span>选填</span><textarea id="source-note" name="note" maxlength="300" rows="2" placeholder="一句话就够：它能帮我解决哪个问题？"></textarea></label>
     <div class="source-form-foot"><button class="btn" id="source-save" type="submit">加入我的书架</button><button class="btn btn-quiet" id="source-cancel" type="button" hidden>取消编辑</button><span id="source-form-status" role="status" aria-live="polite"></span></div>
   </form>
-  <p class="source-local-note">链接需由仓库拥有者 Lucia-chenxi 在 GitHub 确认提交后才会公开同步；个人笔记与上传文件只保存在当前浏览器。<span id="source-sync-status" role="status"></span></p>
+  <p class="source-local-note">链接和模块变更需由仓库拥有者 Lucia-chenxi 在 GitHub 确认提交后才会跨设备同步；个人笔记与上传文件只保存在当前浏览器。<span id="source-sync-status" role="status"></span></p>
+</section>
+
+<section class="wrap tag-manager" id="module-manager" aria-labelledby="module-manager-title">
+  <div class="tag-manager-head">
+    <div><p class="eyebrow">Your chapters</p><h2 id="module-manager-title">模块管理</h2></div>
+    <p>学习地图和资料书架共用这些模块。删除前会请你确认；关联资料会变为“未关联”，不会被删除。</p>
+  </div>
+  <form id="module-manager-form" class="tag-manager-create">
+    <label for="module-manager-input">新建模块</label>
+    <div><input id="module-manager-input" type="text" maxlength="32" placeholder="给新模块起个名字" required><select id="module-manager-stage" aria-label="所属阶段"></select><button class="btn" type="submit">新建模块</button></div>
+    <p id="module-manager-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="tag-manager-all">
+    <h3>全部模块 <span id="module-all-count">0</span></h3>
+    <div id="module-manager-list" class="module-manager-list"></div>
+  </div>
+  <div id="module-hidden-wrap" class="tag-manager-all" hidden>
+    <h3>已隐藏的原有模块</h3>
+    <div id="module-hidden-list" class="module-manager-list"></div>
+  </div>
 </section>
 
 <section class="wrap tag-manager" id="tag-manager" aria-labelledby="tag-manager-title">
@@ -176,7 +198,7 @@
     <div class="foot-meta">
       <span>课程方案 v0.6</span>
       <span>资料由你自己收藏</span>
-      <span>6 阶段 · 8 模块 · 80 单元</span>
+      <span data-module-stats>6 阶段 · 8 模块 · 80 单元</span>
     </div>
   </div>
 </footer>
