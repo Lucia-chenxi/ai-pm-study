@@ -1402,7 +1402,7 @@
         var count = moduleUseCount(deleteN);
         if (!window.confirm("确定删除模块“" + target.title + "”吗？" +
           (count ? "它关联了 " + count + " 条资料；删除后资料会变为未关联，资料本身保留。" : "") +
-          "模块内容和本机笔记会保留在“已隐藏的模块”，可以恢复。")) return;
+          "模块内容和本机笔记会保留，可恢复；恢复后需手动重新关联资料。")) return;
         var config = cleanModuleConfig(moduleConfig);
         config.hidden.push(deleteN);
         var changed = getSources().map(function (source) {
